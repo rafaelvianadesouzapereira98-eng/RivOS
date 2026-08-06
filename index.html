@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RivOS - Web Operating System</title>
+    
+    <!-- Camada 1: UI (Estilos e Visual) -->
+    <link rel="stylesheet" href="css/base/reset.css">
+    <link rel="stylesheet" href="css/base/variables.css">
+</head>
+<body>
+
+    <!-- Estrutura Principal: Área de Trabalho (Desktop) -->
+    <main id="desktop" class="desktop-container">
+        <!-- Elementos interativos iniciais (Ícones de atalho) -->
+        <div class="desktop-icon" data-app="settings">
+            <span class="icon-symbol">⚙️</span>
+            <span class="icon-label">Configurações</span>
+        </div>
+        
+        <div class="desktop-icon" data-app="browser">
+            <span class="icon-symbol">🌐</span>
+            <span class="icon-label">Browser</span>
+        </div>
+
+        <!-- Camada onde o motor vai injetar as janelas flutuantes dos apps -->
+        <div id="window-manager" class="window-layer"></div>
+    </main>
+
+    <!-- Estrutura Secundária: Barra de Tarefas (Taskbar) -->
+    <nav id="taskbar" class="taskbar-container">
+        <!-- Botão de Menu Iniciar -->
+        <button id="start-btn" class="taskbar-btn">
+            <span class="start-icon">❖</span>
+            <span>RivOS</span>
+        </button>
+
+        <!-- Container para os botões dos apps abertos -->
+        <div id="taskbar-apps" class="taskbar-apps-list"></div>
+
+        <!-- Relógio do sistema -->
+        <div id="tray-clock" class="system-clock">00:00</div>
+    </nav>
+
+    <!-- Próximas camadas virão aqui: JS e WASM -->
+</body>
+</html>
