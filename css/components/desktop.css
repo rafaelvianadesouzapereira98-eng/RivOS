@@ -87,3 +87,64 @@
     color: var(--ui-text-muted);
     font-weight: 500;
 }
+
+/* Gaveta de Apps / Menu Iniciar */
+.start-menu-container {
+    position: fixed;
+    bottom: 56px; /* Fica logo acima da barra de tarefas */
+    left: 12px;
+    width: 280px;
+    height: 360px;
+    background: var(--ui-surface);
+    backdrop-filter: var(--ui-glass-blur);
+    -webkit-backdrop-filter: var(--ui-glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--ui-radius-md);
+    box-shadow: var(--ui-shadow-window);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    z-index: 10000;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform-origin: bottom left;
+}
+
+/* Classe utilitária para esconder a gaveta */
+.start-menu-container.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+}
+
+.start-menu-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.start-menu-header h3 {
+    font-size: var(--ui-font-size-md);
+    font-weight: 600;
+    color: var(--ui-text-main);
+}
+
+.start-menu-apps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.app-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: var(--ui-radius-sm);
+    cursor: pointer;
+    font-size: var(--ui-font-size-md);
+    transition: background 0.2s;
+}
+
+.app-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
