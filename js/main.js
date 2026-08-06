@@ -24,8 +24,41 @@ function initClock() {
 function initStartMenu() {
     const startBtn = document.getElementById('start-btn');
     
-    startBtn.addEventListener('click', () => {
-        // Por enquanto, um alerta de teste para provar que o JS está controlando o elemento do HTML
-        alert('Menu Iniciar do RivOS acionado via JavaScript!');
+    document.addEventListener('DOMContentLoaded', () => {
+    initClock();
+    initStartMenu();
+});
+
+function initClock() {
+    const clockElement = document.getElementById('tray-clock');
+    
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        clockElement.textContent = `${hours}:${minutes}`;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+}
+
+// Lógica da Gaveta de Apps no Botão Iniciar
+function initStartMenu() {
+    const startBtn = document.getElementById('start-btn');
+    const startMenu = document.getElementById('start-menu');
+    
+    // Alternar visibilidade ao clicar no botão Iniciar
+    startBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // Impede que o clique feche na mesma hora
+        startMenu.classList.toggle('hidden');
+    });
+
+    // Fechar a gaveta se clicar em qualquer lugar fora dela
+    document.addEventListener('click', (event) => {
+        if (!startMenu.contains(event.target) && !startBtn.contains(event.target)) {
+            startMenu.classList.add('hidden');
+        }
     });
 }
+
