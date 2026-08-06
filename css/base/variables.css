@@ -1,0 +1,20 @@
+:root {
+    /* Cores do Sistema (Estilo Android Dark Mode) */
+    --Riv-bg: #0e1116;
+    --Riv-surface: rgba(30, 35, 45, 0.75);
+    --Riv-accent: #8ab4f8; /* Azul Material You */
+    --Riv-accent-glow: rgba(138, 180, 248, 0.25);
+    
+    /* Tipografia */
+    --Riv-font: system-ui, -apple-system, Roboto, Helvetica, sans-serif;
+    
+    /* Padrões visuais */
+    --Riv-radius-sm: 12px;
+    --Riv-radius-md: 20px;
+    --Riv-radius-lg: 28px;
+    --Ruv-blur: blur(20px);
+    
+    /* Texto */
+    --Riv-text: #e3e3e3;
+    --Riv-text-muted: #9aa0a6;
+}
