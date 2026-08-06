@@ -4,121 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RivOS</title>
-    <link rel="stylesheet" href="css/base/variables.css">
+    <!-- Estilos base e de componentes -->
     <link rel="stylesheet" href="css/base/reset.css">
+    <link rel="stylesheet" href="css/base/variables.css">
     <link rel="stylesheet" href="css/components/taskbar.css">
-    <style>
-        /* Estilos rápidos de layout para o protótipo inicial */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: var(--font-family, sans-serif);
-            background-color: var(--bg-desktop, #121214);
-            color: var(--text-color, #f1f1f1);
-        }
-
-        #riv-desktop {
-            position: relative;
-            width: 100vw;
-            height: calc(100vh - 48px); /* Deixa espaço para a barra de tarefas */
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            display: flex;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            padding: 16px;
-            gap: 16px;
-        }
-
-        .desktop-icon {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .desktop-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .desktop-icon img {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 6px;
-        }
-
-        .desktop-icon span {
-            font-size: 12px;
-            text-align: center;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-        }
-
-        #riv-taskbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
-            height: 48px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            box-sizing: border-box;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 9999;
-        }
-
-        .taskbar-start-btn {
-            background: #3b82f6;
-            border: none;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .taskbar-clock {
-            font-size: 14px;
-            color: #94a3b8;
-        }
-    </style>
+    <link rel="stylesheet" href="css/components/window.css">
+    <link rel="stylesheet" href="css/lockscreen/pin.css">
 </head>
 <body>
 
-    <!-- Área de Trabalho -->
-    <div id="riv-desktop">
-        <div class="desktop-icon" onclick="alert('Abrindo Configurações...')">
-            <div style="font-size: 28px;">⚙️</div>
-            <span>Configurações</span>
-        </div>
-        <div class="desktop-icon" onclick="alert('Abrindo Browser...')">
-            <div style="font-size: 28px;">🌐</div>
-            <span>Browser</span>
+    <!-- 1. TELA DE BLOQUEIO (Segurança Inicial) -->
+    <div id="lockscreen" class="lockscreen-container">
+        <div class="lockscreen-content">
+            <h1>RivOS</h1>
+            <p>Insira o PIN ou use a biometria</p>
+            <!-- O input e botões de segurança serão injetados aqui -->
+            <button id="unlock-btn">Desbloquear</button>
         </div>
     </div>
 
-    <!-- Barra de Tarefas -->
-    <div id="riv-taskbar">
-        <button class="taskbar-start-btn">RivOS</button>
-        <div class="taskbar-clock" id="clock">12:00</div>
+    <!-- 2. ÁREA DE TRABALHO (Desktop) -->
+    <div id="desktop" class="desktop-container" style="display: none;">
+        
+        <!-- Ícones dos Apps instalados aparecerão aqui dinamicamente com base na pasta apps/ -->
+        <div id="desktop-icons" class="desktop-grid">
+            <!-- Exemplo gerado via sistema: se settings e browser estiverem em apps/, aparecem aqui -->
+        </div>
+
+        <!-- Container onde as janelas flutuantes dos apps serão abertas -->
+        <div id="window-manager" class="window-manager"></div>
     </div>
 
-    <script>
-        // Relógio simples em tempo real na barra de tarefas
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }, 1000);
-    </script>
+    <!-- 3. BARRA DE TAREFAS -->
+    <div id="taskbar" class="taskbar-container" style="display: none;">
+        <div class="start-menu-btn" id="start-btn">Riv</div>
+        <div class="taskbar-apps" id="taskbar-running-apps"></div>
+        <div class="system-tray">
+            <span id="clock">12:00</span>
+        </div>
+    </div>
+
+    <!-- Script de Inicialização -->
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
