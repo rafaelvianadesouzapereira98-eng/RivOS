@@ -3,48 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RivOS</title>
-    <!-- Estilos base e de componentes -->
+    <title>RivOS - Web Operating System</title>
+    
+    <!-- Estilos Globais e de Componentes -->
     <link rel="stylesheet" href="css/base/reset.css">
     <link rel="stylesheet" href="css/base/variables.css">
     <link rel="stylesheet" href="css/components/taskbar.css">
     <link rel="stylesheet" href="css/components/window.css">
-    <link rel="stylesheet" href="css/lockscreen/pin.css">
+    <link rel="stylesheet" href="css/components/notifications.css">
 </head>
 <body>
 
-    <!-- 1. TELA DE BLOQUEIO (Segurança Inicial) -->
-    <div id="lockscreen" class="lockscreen-container">
-        <div class="lockscreen-content">
-            <h1>RivOS</h1>
-            <p>Insira o PIN ou use a biometria</p>
-            <!-- O input e botões de segurança serão injetados aqui -->
-            <button id="unlock-btn">Desbloquear</button>
+    <!-- Área de Trabalho (Desktop) -->
+    <div id="riv-desktop" class="desktop-container">
+        <!-- Os ícones dos apps instalados serão injetados aqui dinamicamente -->
+        <div id="desktop-icons" class="desktop-icons-grid"></div>
+
+        <!-- Container onde as janelas flutuantes dos apps vão abrir -->
+        <div id="window-manager" class="window-manager-layer"></div>
+    </div>
+
+    <!-- Barra de Tarefas Inferior (Taskbar) -->
+    <div id="riv-taskbar" class="taskbar-container">
+        <button id="start-menu-btn" class="taskbar-btn">
+            <img src="assets/icons/system/logo.svg" alt="RivOS" class="system-logo">
+            <span>RivOS</span>
+        </button>
+
+        <!-- Lista de apps abertos na barra de tarefas -->
+        <div id="taskbar-apps" class="taskbar-apps-list"></div>
+
+        <!-- Relógio e Status do Sistema -->
+        <div id="system-tray" class="system-tray">
+            <span id="system-clock">00:00</span>
         </div>
     </div>
 
-    <!-- 2. ÁREA DE TRABALHO (Desktop) -->
-    <div id="desktop" class="desktop-container" style="display: none;">
-        
-        <!-- Ícones dos Apps instalados aparecerão aqui dinamicamente com base na pasta apps/ -->
-        <div id="desktop-icons" class="desktop-grid">
-            <!-- Exemplo gerado via sistema: se settings e browser estiverem em apps/, aparecem aqui -->
-        </div>
-
-        <!-- Container onde as janelas flutuantes dos apps serão abertas -->
-        <div id="window-manager" class="window-manager"></div>
-    </div>
-
-    <!-- 3. BARRA DE TAREFAS -->
-    <div id="taskbar" class="taskbar-container" style="display: none;">
-        <div class="start-menu-btn" id="start-btn">Riv</div>
-        <div class="taskbar-apps" id="taskbar-running-apps"></div>
-        <div class="system-tray">
-            <span id="clock">12:00</span>
-        </div>
-    </div>
-
-    <!-- Script de Inicialização -->
+    <!-- Script Principal do Kernel e Inicialização -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
