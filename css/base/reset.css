@@ -1,0 +1,16 @@
+/* Reseta o comportamento padrão de qualquer navegador para a UI do OS fluir perfeitamente */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none; /* Impede seleção de texto acidental na interface do OS */
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--ui-font-main);
+    background-color: var(--ui-bg-primary);
+    color: var(--ui-text-main);
+}
