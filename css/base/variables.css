@@ -18,3 +18,14 @@
     --Riv-text: #e3e3e3;
     --Riv-text-muted: #9aa0a6;
 }
+
+:root {
+    --ui-bg-primary: #090d16;
+    --ui-surface: rgba(18, 24, 38, 0.85);
+    --ui-accent: #38bdf8;
+    --ui-font-main: system-ui, -apple-system, sans-serif;
+    --ui-text-main: #f8fafc;
+    --ui-text-muted: #94a3b8;
+    --ui-radius-md: 16px;
+    --ui-glass-blur: blur(25px);
+}
