@@ -1,8 +1,8 @@
 :root {
-    /* Cores do Sistema (Estilo Android Dark Mode) */
+    /* Cores do Sistema (Estilo RivOS Dark Mode) */
     --Riv-bg: #0e1116;
     --Riv-surface: rgba(30, 35, 45, 0.75);
-    --Riv-accent: #8ab4f8; /* Azul Material You */
+    --Riv-accent: #8ab4f8; /* Azul RivUI Your */
     --Riv-accent-glow: rgba(138, 180, 248, 0.25);
     
     /* Tipografia */
