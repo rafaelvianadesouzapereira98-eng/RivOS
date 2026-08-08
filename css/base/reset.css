@@ -9,7 +9,7 @@ html, body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    font-family: var(--android-font);
-    background-color: var(--android-bg);
-    color: var(--android-text);
+    font-family: var(--riv-font);
+    background-color: var(--riv-bg);
+    color: var(--riv-text);
 }
