@@ -3,18 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RivOS beta 1.0</title>
+    <title>rivOS</title>
     
-    <!-- Camada 1: UI (Estilos e Visual) -->
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Camada Base de Estilos -->
     <link rel="stylesheet" href="css/base/reset.css">
     <link rel="stylesheet" href="css/base/variables.css">
-    <link rel="stylesheet" href="css/components/desktop.css">
+
+    <!-- Estilos de Componentes -->
+    <link rel="stylesheet" href="css/components/window.css">
+    <link rel="stylesheet" href="css/components/taskbar.css">
+    <link rel="stylesheet" href="css/components/notifications.css">
 </head>
 <body>
 
-    <!-- Estrutura Principal: Área de Trabalho (Desktop) -->
-    <main id="desktop" class="desktop-container">
-        <!-- Onde os ícones dos apps da pasta Apps/ aparecerão dinamicamente -->
-        <div id="desktop-icons" class="desktop-icons-grid"></div>
+    <!-- Ambiente Principal do Sistema -->
+    <div id="rivos-root" class="os-container">
+        
+        <!-- Área de Trabalho / Grade de Ícones (utilizando WebP) -->
+        <main id="desktop" class="desktop-container">
+            <div id="desktop-icons" class="desktop-icons-grid">
+                <!-- Exemplo de ícone dinâmico usando WebP -->
+                <div class="desktop-icon" data-app="settings">
+                    <img src="assets/icons/apps/settings.webp" alt="Settings" width="48" height="48">
+                    <span>Settings</span>
+                </div>
+                <div class="desktop-icon" data-app="browser">
+                    <img src="assets/icons/apps/browser.webp" alt="Browser" width="48" height="48">
+                    <span>Browser</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Gerenciador de Janelas Flutuantes -->
+        <div id="window-manager" class="window-layer"></div>
+
+        <!-- Barra de Tarefas / Dock -->
+        <nav id="taskbar" class="taskbar-container">
+            <!-- Botão do Menu / Gaveta -->
+            <button id="start-btn" class="taskbar-btn">
+                <img src="assets/icons/system/logo.webp" alt="rivOS" width="24" height="24">
+            </button>
+
+            <!-- Apps Abertos -->
+            <div id="taskbar-apps" class="taskbar-apps-list"></div>
+
+            <!-- Relógio e Status -->
+            <div id="tray-clock" class="system-clock">00:00</div>
+        </nav>
+
+    </div>
+
+    <!-- Ponto de Entrada JavaScript do Sistema -->
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
