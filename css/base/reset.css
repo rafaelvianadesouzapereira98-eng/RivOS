@@ -13,3 +13,19 @@ html, body {
     background-color: var(--riv-bg);
     color: var(--riv-text);
 }
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: var(--ui-font-main);
+    background-color: var(--ui-bg-primary);
+    color: var(--ui-text-main);
+}
