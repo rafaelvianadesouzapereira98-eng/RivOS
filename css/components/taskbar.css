@@ -1,0 +1,29 @@
+.taskbar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 48px;
+    background: var(--ui-surface);
+    backdrop-filter: var(--ui-glass-blur);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    z-index: 9999;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.taskbar-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.system-clock {
+    font-size: 13px;
+    color: var(--ui-text-muted);
+}
