@@ -1,0 +1,8 @@
+{
+  "nome_app": "RivOS Open Source",
+  "pacote": "com.rivos.github",
+  "versao": "1.0",
+  "tipo_pacote": "ROPK",
+  "icone": "assets/Github.png",
+  "entrada": "index.html"
+}
