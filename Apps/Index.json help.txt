@@ -1,0 +1,35 @@
+Para colocar um novo app no rivOS é necessario usar um caminho ex:
+
+  {
+    "nome_app": "RivBrowser",
+    "pacote": "com.rivos.browser",
+    "versao": "1.0.0",
+    "tipo_pacote": "ROPK",
+    "autor": "RivOS Team",
+    "entrada": "index.html",
+    "icone": "language"
+  }
+]
+ou
+
+[
+  {
+    "nome_app": "Meu App",
+    "pacote": "com.exemplo.app",
+    "versao": "1.0.0",
+    "tipo_pacote": "RPK",
+    "autor": "Desenvolvedor",
+    "entrada": "index.html",
+    "icone": "extension"
+  }
+  
+e ir no index.json e inserir isto:
+
+[
+  {
+    "caminho": "MeuApp/manifest.json"
+  },
+  {
+    "caminho": "RivBrowser/manifest.json"
+  }
+]
