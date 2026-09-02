@@ -1,0 +1,18 @@
+{
+  "nome_app": "RivOS",
+  "pacote": "com.rivos.os",
+  "versao": "1.0.0",
+  "tipo_pacote": "ROPK",
+  "autor": "RivOS Team",
+  "entrada": "index.html",
+  "icone": "assets/icon.png",
+  "permissoes": [
+    "storage",
+    "network"
+  ],
+  "verificacao_seguranca": {
+    "assinado_digitalmente": true,
+    "certificado": "RivOS-Official-Root-CA",
+    "modo_sandbox": false
+  }
+}
