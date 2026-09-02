@@ -1,0 +1,17 @@
+{
+  "nome_app": "RivBrowser Oficial",
+  "pacote": "com.rivos.browser",
+  "versao": "1.0.0",
+  "tipo_pacote": "ROPK",
+  "autor": "RivOS Team",
+  "entrada": "index.html",
+  "icone": "assets/RivBrowsericon.svg",
+  "permissoes": [
+    "network",
+    "storage"
+  ],
+  "verificacao_seguranca": {
+    "assinado_digitalmente": true,
+    "certificado": "RivOS-Official-Root-CA"
+  }
+}

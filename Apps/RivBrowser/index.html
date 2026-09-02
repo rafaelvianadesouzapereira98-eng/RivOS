@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RivBrowser</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+            user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Barra de Ferramentas / Endereço do Browser */
+        .browser-toolbar {
+            height: 55px;
+            background: #242424;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .browser-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .browser-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .browser-btn:active {
+            transform: scale(0.92);
+        }
+
+        .url-bar-container {
+            flex: 1;
+            background: #333333;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 38px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .url-bar-container:focus-within {
+            background: #222222;
+            border-color: #1a73e8;
+        }
+
+        .url-bar-container span.material-icons {
+            font-size: 16px;
+            color: #aaa;
+            margin-right: 6px;
+        }
+
+        #urlInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        #urlInput::placeholder {
+            color: #888;
+        }
+
+        /* Área de Visualização / Home do RivBrowser */
+        .browser-viewport {
+            flex: 1;
+            position: relative;
+            background: #121212;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .browser-logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #1a73e8;
+        }
+
+        .browser-viewport h2 {
+            font-size: 22px;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 25px;
+        }
+
+        .quick-shortcuts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .shortcut-item {
+            background: #222;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .shortcut-item:hover {
+            background: #2c2c2c;
+        }
+
+        .shortcut-item span.material-icons {
+            font-size: 22px;
+            color: #1a73e8;
+        }
+
+        .shortcut-label {
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        /* Indicador de carregamento */
+        .loading-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: #1a73e8;
+            transition: width 0.4s ease;
+            z-index: 15;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-bar" id="loadingBar"></div>
+
+    <!-- Barra de Endereços -->
+    <div class="browser-toolbar">
+        <button class="browser-btn" onclick="voltarPagina()" title="Voltar">
+            <span class="material-icons">arrow_back</span>
+        </button>
+        <button class="browser-btn" onclick="avancarPagina()" title="Avançar">
+            <span class="material-icons">arrow_forward</span>
+        </button>
+        <button class="browser-btn" onclick="recarregarPagina()" title="Recarregar">
+            <span class="material-icons">refresh</span>
+        </button>
+
+        <div class="url-bar-container">
+            <span class="material-icons">lock</span>
+            <input type="text" id="urlInput" placeholder="Pesquisar ou digitar endereço" onkeydown="tratarTecla(event)">
+        </div>
+
+        <button class="browser-btn" onclick="irParaUrl()" title="Ir">
+            <span class="material-icons">search</span>
+        </button>
+    </div>
+
+    <!-- Página Inicial Estilizada do RivBrowser -->
+    <div class="browser-viewport">
+        <span class="material-icons browser-logo">public</span>
+        <h2>RivBrowser</h2>
+        
+        <div class="quick-shortcuts">
+            <div class="shortcut-item" onclick="navegarPara('https://m.youtube.com')">
+                <span class="material-icons">smart_display</span>
+                <span class="shortcut-label">YouTube</span>
+            </div>
+            <div class="shortcut-item" onclick="navegarPara('https://www.google.com')">
+                <span class="material-icons">search</span>
+                <span class="shortcut-label">Google</span>
+            </div>
+            <div class="shortcut-item" onclick="navegarPara('https://pt.wikipedia.org')">
+                <span class="material-icons">menu_book</span>
+                <span class="shortcut-label">Wikipedia</span>
+            </div>
+            <div class="shortcut-item" onclick="navegarPara('https://github.com')">
+                <span class="material-icons">code</span>
+                <span class="shortcut-label">GitHub</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const loadingBar = document.getElementById('loadingBar');
+
+        function tratarTecla(event) {
+            if (event.key === 'Enter') {
+                irParaUrl();
+            }
+        }
+
+        function navegarPara(url) {
+            executarNavegacao(url);
+        }
+
+        function irParaUrl() {
+            let valor = urlInput.value.trim();
+            if (!valor) return;
+
+            let urlFinal = valor;
+
+            // Formata links ou joga direto para a pesquisa do Google se não for URL válida
+            if (!urlFinal.startsWith('http://') && !urlFinal.startsWith('https://')) {
+                if (!urlFinal.includes('.') || urlFinal.includes(' ')) {
+                    urlFinal = 'https://www.google.com/search?q=' + encodeURIComponent(urlFinal);
+                } else {
+                    urlFinal = 'https://' + urlFinal;
+                }
+            }
+
+            executarNavegacao(urlFinal);
+        }
+
+        function executarNavegacao(url) {
+            loadingBar.style.width = '60%';
+            setTimeout(() => {
+                loadingBar.style.width = '100%';
+                window.location.href = url; // Redireciona perfeitamente abrindo qualquer site do mundo sem erros de CORS
+            }, 300);
+        }
+
+        function voltarPagina() {
+            window.history.back();
+        }
+
+        function avancarPagina() {
+            window.history.forward();
+        }
+
+        function recarregarPagina() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
