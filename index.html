@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RivOS UI System</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
@@ -12,29 +12,36 @@
             box-sizing: border-box;
             font-family: Roboto, sans-serif;
             user-select: none;
+            -webkit-user-select: none;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            position: fixed; /* Previne o efeito "puxar para atualizar" do mobile */
         }
         body {
-            background-color: #121212;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
         }
 
-        /* Container ajustado para tela cheia (Sem moldura de smartphone) */
+        /* Container em tela cheia real para mobile */
         .phone-frame {
             width: 100vw;
-            height: 100vh;
+            height: 100dvh; /* Altura dinâmica real para celulares */
             background: #000;
             border-radius: 0;
             border: none;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             box-shadow: none;
             overflow: hidden;
         }
 
-        /* Câmera Frontal removida visualmente */
+        /* Câmera Frontal oculta */
         .camera-punch {
             display: none;
         }
@@ -61,21 +68,22 @@
             align-items: center;
         }
 
-        /* Top Bar (Painel de Configurações Rápidas estilo RivOS) */
+        /* Top Bar (Configurações Rápidas) */
         .top-bar {
             position: absolute;
-            top: -300px; /* Inicialmente oculta acima da tela */
+            top: -350px;
             left: 0;
             width: 100%;
-            height: 250px;
+            height: 260px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 45px 20px 20px 20px;
             color: #fff;
             z-index: 85;
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.9);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;
             transition: top 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
@@ -83,7 +91,7 @@
         }
 
         .top-bar.open {
-            top: 0; /* Desce cobrindo o topo */
+            top: 0;
         }
 
         .quick-settings-grid {
@@ -134,7 +142,7 @@
             cursor: pointer;
         }
 
-        /* Telas (Background Wallpaper compartilhado) */
+        /* Telas */
         .screen {
             position: absolute;
             top: 0;
@@ -149,7 +157,7 @@
             transition: transform 0.4s ease, opacity 0.3s ease;
         }
 
-        /* 1. TELA DE BLOQUEIO */
+        /* 1. Tela de Bloqueio */
         #lockScreen {
             z-index: 50;
             background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
@@ -190,6 +198,7 @@
         .notif-card {
             background: rgba(30, 30, 30, 0.7);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 12px 16px;
             border-radius: 16px;
             color: #fff;
@@ -205,7 +214,7 @@
             cursor: pointer;
         }
 
-        /* 2. TELA INICIAL (HOME) */
+        /* 2. Tela Inicial (Home) */
         #homeScreen {
             z-index: 40;
         }
@@ -219,6 +228,7 @@
         .widget-search {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 12px 20px;
             border-radius: 30px;
             display: flex;
@@ -239,11 +249,11 @@
         .empty-app-slot {
             width: 52px;
             height: 52px;
-            border-radius: 14px;
+            border-radius: 16px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             border: 2px dashed rgba(255, 255, 255, 0.2);
-            cursor: pointer;
         }
 
         .dock {
@@ -251,15 +261,15 @@
             justify-content: space-around;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 25px;
             padding: 10px 5px;
         }
 
-        /* Botão da Gaveta de Apps */
         .app-drawer-icon-btn {
             width: 52px;
             height: 52px;
-            border-radius: 14px;
+            border-radius: 16px;
             background: #222222;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
@@ -267,15 +277,6 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-
-        .app-drawer-icon-btn:hover {
-            background: #2c2c2c;
-        }
-
-        .app-drawer-icon-btn:active {
-            transform: scale(0.92);
         }
 
         .drawer-grid-icon {
@@ -304,7 +305,7 @@
 
         .nav-bar span { cursor: pointer; }
 
-        /* Estilo atualizado para preenchimento total do ícone no quadrado */
+        /* Apps Carregados */
         .loaded-app-wrapper {
             display: flex;
             flex-direction: column;
@@ -325,12 +326,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            overflow: hidden; /* Garante que a imagem respeite as bordas arredondadas */
-            transition: transform 0.15s ease;
-        }
-
-        .loaded-app-item:active {
-            transform: scale(0.92);
+            overflow: hidden;
         }
 
         .loaded-app-item span.material-icons { font-size: 28px; color: #60a5fa; }
@@ -344,7 +340,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            font-weight: 400;
         }
 
         .app-badge {
@@ -360,7 +355,7 @@
         .badge-ropk { background: #1a73e8; color: #fff; }
         .badge-rpk { background: #e8711a; color: #fff; }
 
-        /* 3. GAVETA DE APLICATIVOS (APP DRAWER) */
+        /* Gaveta de Apps */
         #appDrawer {
             position: absolute;
             top: 100%;
@@ -369,6 +364,7 @@
             height: 100%;
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             z-index: 60;
             display: flex;
             flex-direction: column;
@@ -397,7 +393,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 16px 12px;
             overflow-y: auto;
-            max-height: calc(100vh - 150px);
+            max-height: calc(100dvh - 150px);
             padding-bottom: 20px;
         }
 
@@ -407,10 +403,9 @@
             background: rgba(255, 255, 255, 0.08);
             border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 16px;
-            cursor: pointer;
         }
 
-        /* 4. PASTA "Apps/" */
+        /* Pasta Apps/ */
         #folderScreen {
             position: absolute;
             top: 100%;
@@ -419,6 +414,7 @@
             height: 100%;
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             z-index: 65;
             display: flex;
             flex-direction: column;
@@ -442,7 +438,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 16px 12px;
             overflow-y: auto;
-            max-height: calc(100vh - 150px);
+            max-height: calc(100dvh - 150px);
             padding: 10px 0;
         }
 
@@ -623,12 +619,8 @@
     </div>
 
     <script>
-        // ==========================================
-        // Atualização em Tempo Real (Relógio, Calendário e Bateria)
-        // ==========================================
         function atualizarSistemaReal() {
             const agora = new Date();
-
             const horas = String(agora.getHours()).padStart(2, '0');
             const minutos = String(agora.getMinutes()).padStart(2, '0');
             const horaFormatada = `${horas}:${minutos}`;
@@ -648,16 +640,13 @@
             if ('getBattery' in navigator) {
                 try {
                     const battery = await navigator.getBattery();
-                    
                     function atualizarBateria() {
                         const nivelPercentual = Math.round(battery.level * 100);
                         const estaCarregando = battery.charging;
-
                         const batteryText = document.getElementById('batteryText');
                         const batteryIcon = document.getElementById('batteryIcon');
 
                         batteryText.innerText = nivelPercentual + '%';
-
                         if (estaCarregando) {
                             batteryIcon.innerText = 'bolt';
                             batteryIcon.style.color = '#000';
@@ -669,13 +658,10 @@
                             batteryIcon.style.color = '#fff';
                         }
                     }
-
                     atualizarBateria();
                     battery.addEventListener('levelchange', atualizarBateria);
                     battery.addEventListener('chargingchange', atualizarBateria);
-                } catch (e) {
-                    console.log("API de bateria não permitida ou bloqueada pelo navegador.");
-                }
+                } catch (e) {}
             } else {
                 document.getElementById('batteryText').innerText = '100%';
                 document.getElementById('batteryIcon').innerText = 'battery_full';
@@ -684,15 +670,11 @@
 
         iniciarMonitoramentoBateria();
 
-        // ==========================================
-        // Carregamento dinâmico dos Apps via index.json
-        // ==========================================
         async function carregarAppsDoSistema() {
             try {
                 let resposta = await fetch('Apps/index.json');
                 if (!resposta.ok) return;
                 let listaDeCaminhos = await resposta.json();
-
                 let appsCarregados = [];
 
                 for (let item of listaDeCaminhos) {
@@ -701,7 +683,6 @@
                         if (resManifest.ok) {
                             let raw = await resManifest.json();
                             let nomePasta = item.caminho.split('/')[0];
-
                             let appNormalizado = {
                                 nome_app: raw.nome_app || raw.name || raw.nome || "App sem nome",
                                 pacote: raw.pacote || raw.package || raw.id || "com.desconhecido",
@@ -711,17 +692,13 @@
                                 entrada: raw.entrada || raw.entry || "index.html",
                                 pasta: nomePasta
                             };
-
                             appsCarregados.push(appNormalizado);
                         }
-                    } catch (err) {
-                        console.log(`Erro ao carregar o manifesto: ${item.caminho}`, err);
-                    }
+                    } catch (err) {}
                 }
 
                 const drawerContainer = document.getElementById('drawerGridContainer');
                 const drawerSlots = drawerContainer.children;
-
                 const folderContainer = document.getElementById('folderGridContainer');
                 const folderSlots = folderContainer.children;
 
@@ -730,14 +707,9 @@
                     if (index >= drawerSlots.length) return;
 
                     let badgeClass = app.tipo_pacote === 'ROPK' ? 'badge-ropk' : 'badge-rpk';
-
                     let iconeVal = app.icone || 'extension';
                     let iconeLower = iconeVal.toLowerCase();
-                    let ehImagem = iconeLower.includes('/') || 
-                                   iconeLower.endsWith('.png') || 
-                                   iconeLower.endsWith('.jpg') || 
-                                   iconeLower.endsWith('.jpeg') || 
-                                   iconeLower.endsWith('.webp');
+                    let ehImagem = iconeLower.includes('/') || iconeLower.endsWith('.png') || iconeLower.endsWith('.jpg') || iconeLower.endsWith('.jpeg') || iconeLower.endsWith('.webp');
 
                     let iconeHtml = ehImagem 
                         ? `<img src="Apps/${app.pasta}/${iconeVal}" style="width: 100%; height: 100%; object-fit: cover;">`
@@ -753,10 +725,7 @@
                         <span class="loaded-app-label">${app.nome_app}</span>
                     `;
 
-                    appEl.onclick = () => {
-                        abrirAplicativo(app);
-                    };
-
+                    appEl.onclick = () => { abrirAplicativo(app); };
                     drawerContainer.replaceChild(appEl, drawerSlots[index]);
 
                     if (index < folderSlots.length) {
@@ -764,13 +733,9 @@
                         appElFolder.onclick = appEl.onclick;
                         folderContainer.replaceChild(appElFolder, folderSlots[index]);
                     }
-
                     index++;
                 });
-
-            } catch (erro) {
-                console.log("Erro ao carregar Apps/index.json", erro);
-            }
+            } catch (erro) {}
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -778,8 +743,7 @@
         });
 
         function abrirAplicativo(app) {
-            let urlApp = `Apps/${app.pasta}/${app.entrada}`;
-            window.location.href = urlApp;
+            window.location.href = `Apps/${app.pasta}/${app.entrada}`;
         }
 
         function pesquisarGoogle() {
@@ -804,17 +768,13 @@
         }
 
         function toggleDrawer() {
-            const drawer = document.getElementById('appDrawer');
-            const folder = document.getElementById('folderScreen');
-            folder.classList.remove('open');
-            drawer.classList.toggle('open');
+            document.getElementById('folderScreen').classList.remove('open');
+            document.getElementById('appDrawer').classList.toggle('open');
         }
 
         function toggleFolder() {
-            const folder = document.getElementById('folderScreen');
-            const drawer = document.getElementById('appDrawer');
-            drawer.classList.remove('open');
-            folder.classList.toggle('open');
+            document.getElementById('appDrawer').classList.remove('open');
+            document.getElementById('folderScreen').classList.toggle('open');
         }
 
         function closeTopBar() {
@@ -824,20 +784,13 @@
         function toggleQS(name) {
             const tile = document.getElementById('tile' + name);
             tile.classList.toggle('active');
-            
             if (name === 'Wifi') {
-                const statusWifi = document.getElementById('statusWifi');
-                if (tile.classList.contains('active')) {
-                    statusWifi.style.display = 'inline-block';
-                } else {
-                    statusWifi.style.display = 'none';
-                }
+                document.getElementById('statusWifi').style.display = tile.classList.contains('active') ? 'inline-block' : 'none';
             }
         }
 
         let touchStartY = 0;
         let touchEndY = 0;
-
         const phoneFrame = document.getElementById('phoneFrame');
 
         phoneFrame.addEventListener('touchstart', (e) => {
@@ -848,15 +801,6 @@
             touchEndY = e.changedTouches[0].screenY;
             handleGesture();
         }, false);
-
-        phoneFrame.addEventListener('mousedown', (e) => {
-            touchStartY = e.clientY;
-        });
-
-        phoneFrame.addEventListener('mouseup', (e) => {
-            touchEndY = e.clientY;
-            handleGesture();
-        });
 
         function handleGesture() {
             let diff = touchEndY - touchStartY;
