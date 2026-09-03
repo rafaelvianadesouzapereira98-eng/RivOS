@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RivOS UI System</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+            user-select: none;
+        }
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container ajustado para tela cheia (Sem moldura de smartphone) */
+        .phone-frame {
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            border-radius: 0;
+            border: none;
+            position: relative;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        /* Câmera Frontal removida visualmente */
+        .camera-punch {
+            display: none;
+        }
+
+        /* Barra de Status */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: #fff;
+            font-size: 13px;
+            z-index: 90;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* Top Bar (Painel de Configurações Rápidas estilo RivOS) */
+        .top-bar {
+            position: absolute;
+            top: -300px; /* Inicialmente oculta acima da tela */
+            left: 0;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 45px 20px 20px 20px;
+            color: #fff;
+            z-index: 85;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(25px);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            transition: top 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .top-bar.open {
+            top: 0; /* Desce cobrindo o topo */
+        }
+
+        .quick-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .qs-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .qs-tile.active {
+            background: #1a73e8;
+            color: #fff;
+        }
+
+        .qs-tile span.material-icons {
+            font-size: 22px;
+        }
+
+        .qs-tile span.qs-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .top-bar-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .top-bar-footer span {
+            cursor: pointer;
+        }
+
+        /* Telas (Background Wallpaper compartilhado) */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 55px 15px 20px 15px;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+
+        /* 1. TELA DE BLOQUEIO */
+        #lockScreen {
+            z-index: 50;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            padding-top: 45px;
+        }
+
+        #lockScreen.unlocked {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lock-clock {
+            text-align: center;
+            color: #fff;
+            margin-top: 15px;
+        }
+
+        .lock-clock h1 {
+            font-size: 64px;
+            font-weight: 300;
+            letter-spacing: -2px;
+        }
+
+        .lock-clock p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .lock-notifications {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .notif-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: #fff;
+        }
+
+        .lock-footer {
+            text-align: center;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        /* 2. TELA INICIAL (HOME) */
+        #homeScreen {
+            z-index: 40;
+        }
+
+        .home-widgets {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .widget-search {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .empty-app-slot {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(5px);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .dock {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 10px 5px;
+        }
+
+        /* Botão da Gaveta de Apps */
+        .app-drawer-icon-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #222222;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .app-drawer-icon-btn:hover {
+            background: #2c2c2c;
+        }
+
+        .app-drawer-icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        .drawer-grid-icon {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .drawer-cube {
+            background: #888888;
+            border-radius: 3px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            color: #fff;
+            font-size: 20px;
+            opacity: 0.8;
+            padding-top: 5px;
+        }
+
+        .nav-bar span { cursor: pointer; }
+
+        /* Estilo atualizado para preenchimento total do ícone no quadrado */
+        .loaded-app-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .loaded-app-item {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            overflow: hidden; /* Garante que a imagem respeite as bordas arredondadas */
+            transition: transform 0.15s ease;
+        }
+
+        .loaded-app-item:active {
+            transform: scale(0.92);
+        }
+
+        .loaded-app-item span.material-icons { font-size: 28px; color: #60a5fa; }
+        
+        .loaded-app-label {
+            font-size: 10px;
+            color: #ffffff;
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            font-weight: 400;
+        }
+
+        .app-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 5px;
+            padding: 1px 3px;
+            border-radius: 4px;
+            font-weight: bold;
+            z-index: 5;
+        }
+        .badge-ropk { background: #1a73e8; color: #fff; }
+        .badge-rpk { background: #e8711a; color: #fff; }
+
+        /* 3. GAVETA DE APLICATIVOS (APP DRAWER) */
+        #appDrawer {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(25px);
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            padding: 55px 20px 20px 20px;
+            transition: top 0.3s ease-in-out;
+        }
+
+        #appDrawer.open {
+            top: 0;
+        }
+
+        .drawer-search-bar {
+            width: 100%;
+            background: #2b2b2b;
+            border: none;
+            outline: none;
+            border-radius: 20px;
+            padding: 10px 18px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .drawer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px 12px;
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+            padding-bottom: 20px;
+        }
+
+        .drawer-empty-slot {
+            width: 54px;
+            height: 54px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            cursor: pointer;
+        }
+
+        /* 4. PASTA "Apps/" */
+        #folderScreen {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(25px);
+            z-index: 65;
+            display: flex;
+            flex-direction: column;
+            padding: 55px 20px 20px 20px;
+            transition: top 0.3s ease-in-out;
+        }
+
+        #folderScreen.open {
+            top: 0;
+        }
+
+        .folder-header {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px 12px;
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+            padding: 10px 0;
+        }
+
+        .folder-empty-slot {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="phoneFrame">
+        <div class="camera-punch"></div>
+
+        <div class="status-bar">
+            <span id="statusBarClock">10:09</span>
+            <div class="status-icons">
+                <span class="material-icons" style="font-size: 12px;">signal_cellular_alt</span>
+                <span class="material-icons" style="font-size: 12px;" id="statusWifi">wifi</span>
+                <span id="batteryText" style="font-size: 11px;">62%</span>
+                <span class="material-icons" id="batteryIcon" style="font-size: 13px;">battery_full</span>
+            </div>
+        </div>
+
+        <div class="top-bar" id="topBar">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span style="font-size: 14px; font-weight: 500;">Configurações Rápidas</span>
+                <span class="material-icons" onclick="closeTopBar()" style="cursor: pointer; font-size: 18px;">close</span>
+            </div>
+
+            <div class="quick-settings-grid">
+                <div class="qs-tile active" id="tileWifi" onclick="toggleQS('Wifi')">
+                    <span class="material-icons">wifi</span>
+                    <span class="qs-label">Wi-Fi</span>
+                </div>
+                <div class="qs-tile" id="tileBluetooth" onclick="toggleQS('Bluetooth')">
+                    <span class="material-icons">bluetooth</span>
+                    <span class="qs-label">Bluetooth</span>
+                </div>
+                <div class="qs-tile active" id="tileMobile" onclick="toggleQS('Mobile')">
+                    <span class="material-icons">signal_cellular_alt</span>
+                    <span class="qs-label">Dados</span>
+                </div>
+                <div class="qs-tile" id="tileDND" onclick="toggleQS('DND')">
+                    <span class="material-icons">do_not_disturb_on</span>
+                    <span class="qs-label">Silencioso</span>
+                </div>
+                <div class="qs-tile" id="tileFlash" onclick="toggleQS('Flash')">
+                    <span class="material-icons">flash_on</span>
+                    <span class="qs-label">Lanterna</span>
+                </div>
+                <div class="qs-tile" id="tileRotate" onclick="toggleQS('Rotate')">
+                    <span class="material-icons">screen_rotation</span>
+                    <span class="qs-label">Girar</span>
+                </div>
+                <div class="qs-tile" id="tileBattery" onclick="toggleQS('Battery')">
+                    <span class="material-icons">battery_saver</span>
+                    <span class="qs-label">Economia</span>
+                </div>
+                <div class="qs-tile" id="tileFolder" onclick="toggleFolder(); closeTopBar();">
+                    <span class="material-icons">folder</span>
+                    <span class="qs-label">Apps/</span>
+                </div>
+            </div>
+
+            <div class="top-bar-footer">
+                <span>RivOS System</span>
+                <span onclick="toggleDrawer(); closeTopBar();">Abrir Gaveta</span>
+            </div>
+        </div>
+
+        <div class="screen" id="lockScreen">
+            <div class="lock-clock">
+                <h1 id="lockScreenClock">10:09</h1>
+                <p id="lockScreenDate">Mon, Oct 23</p>
+            </div>
+
+            <div class="lock-notifications">
+                <div class="notif-card">
+                    <div style="font-size:12px; opacity:0.8; display:flex; justify-content:space-between;"><span>Gmail</span><span>Agora</span></div>
+                    <div style="font-size:13px; font-weight:600; margin-top:2px;">3 novas mensagens</div>
+                </div>
+            </div>
+
+            <div class="lock-footer" onclick="unlockPhone()">
+                <span class="material-icons" style="font-size: 32px;">fingerprint</span>
+                <span style="font-size: 12px;">Deslize para desbloquear</span>
+            </div>
+        </div>
+
+        <div class="screen" id="homeScreen">
+            <div class="home-widgets">
+                <div class="widget-search" onclick="pesquisarGoogle()">
+                    <span class="material-icons" style="font-size: 18px; color: #ccc;">search</span>
+                    <span>Pesquisar ou dizer "Ok RivOS"</span>
+                </div>
+
+                <div class="app-grid">
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="dock">
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="empty-app-slot"></div>
+                    <div class="app-drawer-icon-btn" onclick="toggleDrawer()" title="Abrir Gaveta de Apps">
+                        <div class="drawer-grid-icon">
+                            <div class="drawer-cube"></div>
+                            <div class="drawer-cube"></div>
+                            <div class="drawer-cube"></div>
+                            <div class="drawer-cube"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-bar">
+                    <span class="material-icons" onclick="lockPhone()">arrow_back_ios</span>
+                    <span class="material-icons" onclick="goHome()">radio_button_unchecked</span>
+                    <span class="material-icons" onclick="toggleDrawer()">square</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="appDrawer">
+            <input type="text" class="drawer-search-bar" placeholder="Pesquisar apps">
+            <div class="drawer-grid" id="drawerGridContainer">
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+                <div class="drawer-empty-slot"></div>
+            </div>
+        </div>
+
+        <div id="folderScreen">
+            <div class="folder-header">Apps/</div>
+            <div class="folder-grid" id="folderGridContainer">
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+                <div class="folder-empty-slot"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // Atualização em Tempo Real (Relógio, Calendário e Bateria)
+        // ==========================================
+        function atualizarSistemaReal() {
+            const agora = new Date();
+
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            const horaFormatada = `${horas}:${minutos}`;
+
+            document.getElementById('statusBarClock').innerText = horaFormatada;
+            document.getElementById('lockScreenClock').innerText = horaFormatada;
+
+            const opcoesData = { weekday: 'short', month: 'short', day: 'numeric' };
+            const dataFormatada = agora.toLocaleDateString('pt-BR', opcoesData);
+            document.getElementById('lockScreenDate').innerText = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+        }
+
+        setInterval(atualizarSistemaReal, 1000);
+        atualizarSistemaReal();
+
+        async function iniciarMonitoramentoBateria() {
+            if ('getBattery' in navigator) {
+                try {
+                    const battery = await navigator.getBattery();
+                    
+                    function atualizarBateria() {
+                        const nivelPercentual = Math.round(battery.level * 100);
+                        const estaCarregando = battery.charging;
+
+                        const batteryText = document.getElementById('batteryText');
+                        const batteryIcon = document.getElementById('batteryIcon');
+
+                        batteryText.innerText = nivelPercentual + '%';
+
+                        if (estaCarregando) {
+                            batteryIcon.innerText = 'bolt';
+                            batteryIcon.style.color = '#000';
+                        } else if (nivelPercentual <= 15) {
+                            batteryIcon.innerText = 'error'; 
+                            batteryIcon.style.color = '#ff4444';
+                        } else {
+                            batteryIcon.innerText = 'battery_full';
+                            batteryIcon.style.color = '#fff';
+                        }
+                    }
+
+                    atualizarBateria();
+                    battery.addEventListener('levelchange', atualizarBateria);
+                    battery.addEventListener('chargingchange', atualizarBateria);
+                } catch (e) {
+                    console.log("API de bateria não permitida ou bloqueada pelo navegador.");
+                }
+            } else {
+                document.getElementById('batteryText').innerText = '100%';
+                document.getElementById('batteryIcon').innerText = 'battery_full';
+            }
+        }
+
+        iniciarMonitoramentoBateria();
+
+        // ==========================================
+        // Carregamento dinâmico dos Apps via index.json
+        // ==========================================
+        async function carregarAppsDoSistema() {
+            try {
+                let resposta = await fetch('Apps/index.json');
+                if (!resposta.ok) return;
+                let listaDeCaminhos = await resposta.json();
+
+                let appsCarregados = [];
+
+                for (let item of listaDeCaminhos) {
+                    try {
+                        let resManifest = await fetch(`Apps/${item.caminho}`);
+                        if (resManifest.ok) {
+                            let raw = await resManifest.json();
+                            let nomePasta = item.caminho.split('/')[0];
+
+                            let appNormalizado = {
+                                nome_app: raw.nome_app || raw.name || raw.nome || "App sem nome",
+                                pacote: raw.pacote || raw.package || raw.id || "com.desconhecido",
+                                versao: raw.versao || raw.version || "1.0",
+                                tipo_pacote: raw.tipo_pacote || raw.package_type || "ROPK",
+                                icone: raw.icone || raw.icon || "extension",
+                                entrada: raw.entrada || raw.entry || "index.html",
+                                pasta: nomePasta
+                            };
+
+                            appsCarregados.push(appNormalizado);
+                        }
+                    } catch (err) {
+                        console.log(`Erro ao carregar o manifesto: ${item.caminho}`, err);
+                    }
+                }
+
+                const drawerContainer = document.getElementById('drawerGridContainer');
+                const drawerSlots = drawerContainer.children;
+
+                const folderContainer = document.getElementById('folderGridContainer');
+                const folderSlots = folderContainer.children;
+
+                let index = 0;
+                appsCarregados.forEach(app => {
+                    if (index >= drawerSlots.length) return;
+
+                    let badgeClass = app.tipo_pacote === 'ROPK' ? 'badge-ropk' : 'badge-rpk';
+
+                    let iconeVal = app.icone || 'extension';
+                    let iconeLower = iconeVal.toLowerCase();
+                    let ehImagem = iconeLower.includes('/') || 
+                                   iconeLower.endsWith('.png') || 
+                                   iconeLower.endsWith('.jpg') || 
+                                   iconeLower.endsWith('.jpeg') || 
+                                   iconeLower.endsWith('.webp');
+
+                    let iconeHtml = ehImagem 
+                        ? `<img src="Apps/${app.pasta}/${iconeVal}" style="width: 100%; height: 100%; object-fit: cover;">`
+                        : `<span class="material-icons">${iconeVal}</span>`;
+
+                    let appEl = document.createElement('div');
+                    appEl.className = 'loaded-app-wrapper';
+                    appEl.innerHTML = `
+                        <div class="loaded-app-item">
+                            <span class="app-badge ${badgeClass}">${app.tipo_pacote}</span>
+                            ${iconeHtml}
+                        </div>
+                        <span class="loaded-app-label">${app.nome_app}</span>
+                    `;
+
+                    appEl.onclick = () => {
+                        abrirAplicativo(app);
+                    };
+
+                    drawerContainer.replaceChild(appEl, drawerSlots[index]);
+
+                    if (index < folderSlots.length) {
+                        let appElFolder = appEl.cloneNode(true);
+                        appElFolder.onclick = appEl.onclick;
+                        folderContainer.replaceChild(appElFolder, folderSlots[index]);
+                    }
+
+                    index++;
+                });
+
+            } catch (erro) {
+                console.log("Erro ao carregar Apps/index.json", erro);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarAppsDoSistema();
+        });
+
+        function abrirAplicativo(app) {
+            let urlApp = `Apps/${app.pasta}/${app.entrada}`;
+            window.location.href = urlApp;
+        }
+
+        function pesquisarGoogle() {
+            window.location.href = 'https://www.google.com';
+        }
+
+        function unlockPhone() {
+            document.getElementById('lockScreen').classList.add('unlocked');
+        }
+
+        function lockPhone() {
+            document.getElementById('lockScreen').classList.remove('unlocked');
+            document.getElementById('appDrawer').classList.remove('open');
+            document.getElementById('folderScreen').classList.remove('open');
+            document.getElementById('topBar').classList.remove('open');
+        }
+
+        function goHome() {
+            document.getElementById('appDrawer').classList.remove('open');
+            document.getElementById('folderScreen').classList.remove('open');
+            document.getElementById('topBar').classList.remove('open');
+        }
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('appDrawer');
+            const folder = document.getElementById('folderScreen');
+            folder.classList.remove('open');
+            drawer.classList.toggle('open');
+        }
+
+        function toggleFolder() {
+            const folder = document.getElementById('folderScreen');
+            const drawer = document.getElementById('appDrawer');
+            drawer.classList.remove('open');
+            folder.classList.toggle('open');
+        }
+
+        function closeTopBar() {
+            document.getElementById('topBar').classList.remove('open');
+        }
+
+        function toggleQS(name) {
+            const tile = document.getElementById('tile' + name);
+            tile.classList.toggle('active');
+            
+            if (name === 'Wifi') {
+                const statusWifi = document.getElementById('statusWifi');
+                if (tile.classList.contains('active')) {
+                    statusWifi.style.display = 'inline-block';
+                } else {
+                    statusWifi.style.display = 'none';
+                }
+            }
+        }
+
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        const phoneFrame = document.getElementById('phoneFrame');
+
+        phoneFrame.addEventListener('touchstart', (e) => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+
+        phoneFrame.addEventListener('touchend', (e) => {
+            touchEndY = e.changedTouches[0].screenY;
+            handleGesture();
+        }, false);
+
+        phoneFrame.addEventListener('mousedown', (e) => {
+            touchStartY = e.clientY;
+        });
+
+        phoneFrame.addEventListener('mouseup', (e) => {
+            touchEndY = e.clientY;
+            handleGesture();
+        });
+
+        function handleGesture() {
+            let diff = touchEndY - touchStartY;
+            const drawer = document.getElementById('appDrawer');
+            const topBar = document.getElementById('topBar');
+            const lockScreen = document.getElementById('lockScreen');
+
+            if (lockScreen.classList.contains('unlocked')) {
+                if (diff < -50) {
+                    drawer.classList.add('open');
+                    topBar.classList.remove('open');
+                } else if (diff > 50) {
+                    if (drawer.classList.contains('open')) {
+                        drawer.classList.remove('open');
+                    } else {
+                        topBar.classList.add('open');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
